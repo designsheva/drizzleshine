@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./App.css";
-
-// --- Components ---
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -15,249 +13,423 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/90 backdrop-blur-sm border-b border-black/10 py-4" : "bg-transparent py-6"}`}>
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? "bg-white/80 backdrop-blur-md border-b border-black/5 py-4"
+          : "bg-transparent py-6"
+      }`}
+    >
       <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
-        <a href="#" className="text-xl font-bold tracking-tight">
-          drizzleshine
+        <a href="#" className="text-xl font-bold tracking-tight group">
+          <span className="inline-block transition-transform group-hover:-rotate-3" style={{ fontFamily: 'Syne, sans-serif' }}>Drizzle</span>
+          <span className="inline-block transition-transform group-hover:rotate-3 text-gradient" style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic' }}>shine</span>
         </a>
         <div className="hidden md:flex gap-8 text-sm font-medium">
-          {["Work", "About", "Services", "Contact"].map((item) => (
-            <a key={item} href={`#${item.toLowerCase()}`} className="hover:opacity-50 transition-opacity">
-              {item}
+          {["Work", "About", "Services", "Contact"].map((item, i) => (
+            <a
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              className="relative overflow-hidden group"
+              style={{ animationDelay: `${i * 0.1}s` }}
+            >
+              <span className="inline-block transition-transform group-hover:-translate-y-full">{item}</span>
+              <span className="absolute left-0 top-0 inline-block translate-y-full transition-transform group-hover:translate-y-0 text-gradient font-semibold">{item}</span>
             </a>
           ))}
         </div>
         <button className="md:hidden">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
         </button>
       </div>
     </nav>
   );
 };
 
+const FloatingOrb = ({ className, delay = 0 }: { className?: string; delay?: number }) => (
+  <div 
+    className={`absolute rounded-full blur-3xl opacity-30 animate-float ${className}`}
+    style={{ animationDelay: `${delay}s` }}
+  />
+);
+
 const Hero = () => {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const heroRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (heroRef.current) {
+        const rect = heroRef.current.getBoundingClientRect();
+        setMousePos({
+          x: (e.clientX - rect.left - rect.width / 2) / 50,
+          y: (e.clientY - rect.top - rect.height / 2) / 50,
+        });
+      }
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
   return (
-    <section id="hero" className="min-h-screen flex flex-col justify-center px-6 pt-24 max-w-6xl mx-auto">
-      <div className="space-y-6 max-w-4xl">
-        <p className="text-sm md:text-base font-medium text-gray-500 tracking-wide uppercase animate-fade-in-up">
-          Web3 & DeFi Content Writer
+    <section
+      ref={heroRef}
+      id="hero"
+      className="min-h-screen flex items-center justify-center px-6 pt-20 relative overflow-hidden"
+    >
+      {/* Animated background orbs */}
+      <FloatingOrb className="w-96 h-96 bg-purple-300 -top-20 -left-20" delay={0} />
+      <FloatingOrb className="w-80 h-80 bg-blue-300 top-1/3 -right-20" delay={2} />
+      <FloatingOrb className="w-64 h-64 bg-amber-200 bottom-20 left-1/4" delay={4} />
+      
+      {/* Grid pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)]" />
+
+      <div 
+        className="max-w-6xl w-full space-y-6 relative z-10"
+      >
+        <p className="text-sm md:text-base font-medium tracking-wide uppercase animate-fade-in-up inline-flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <span className="text-gradient">Web3 & DeFi Content Writer</span>
         </p>
-        <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter leading-[0.9] text-black animate-slide-up">
-          I help Web3 and DeFi brands <br className="hidden md:block" />
-          turn complex ideas into <span className="text-gray-400">clear, educational</span> <br className="hidden md:block" />
-          content that builds trust.
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.1] text-black animate-slide-up" style={{ fontFamily: 'Syne, sans-serif' }}>
+          I help Web3 and DeFi brands{" "}
+          <br className="hidden md:block" />
+          turn complex ideas into{" "}
+          <span className="text-gradient-animated">clear</span>
+          ,{" "}
+          <span className="text-gradient-animated" style={{ animationDelay: '0.5s' }}>educational</span>{" "}
+          <br className="hidden md:block" />
+          content that builds{" "}
+          <span className="text-gradient-animated" style={{ animationDelay: '1s' }}>trust</span>
+          .
         </h1>
-        <p className="text-xl md:text-2xl text-gray-600 leading-relaxed pt-4">
+        <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
           Through educational X threads, project breakdowns, and long-form writing.
         </p>
-        <div className="pt-4 flex flex-col sm:flex-row gap-4">
-          <a href="#contact" className="inline-flex items-center justify-center px-8 py-4 bg-black text-white font-medium transition-all hover:bg-gray-800">
+        <div className="flex flex-col sm:flex-row gap-4 pt-4 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
+          <a
+            href="#contact"
+            className="group inline-flex items-center justify-center px-8 py-4 bg-black text-white font-medium rounded-full transition-all hover:scale-105 hover:shadow-2xl hover:shadow-black/20 active:scale-95"
+          >
             Let's Work Together
-            <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-          </a>
-          <a href="#work" className="inline-flex items-center justify-center px-8 py-4 border-2 border-black font-medium hover:bg-black hover:text-white transition-all">
-            View Work
+            <svg className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
           </a>
         </div>
       </div>
-    </section>
-  )
-}
 
-const ProjectCard = ({ title, category, link }: { title: string, category: string, link: string }) => (
-  <a href={link} target="_blank" rel="noopener noreferrer" className="group cursor-pointer">
-    <div className="aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden mb-6 relative">
-      <div className="w-full h-full bg-neutral-100 flex items-center justify-center text-neutral-400">
-        <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+      {/* Scroll indicator */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <div className="w-6 h-10 border-2 border-black/20 rounded-full flex justify-center pt-2">
+          <div className="w-1 h-2 bg-black/40 rounded-full animate-scroll-down" />
+        </div>
       </div>
-      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
+    </section>
+  );
+};
+
+
+const ProjectCard = ({
+  title,
+  category,
+  link,
+  index,
+}: {
+  title: string;
+  category: string;
+  link: string;
+  index: number;
+}) => (
+  <a
+    href={link}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="group block animate-fade-in-up"
+    style={{ animationDelay: `${index * 0.1}s` }}
+  >
+    <div className="aspect-4/3 bg-linear-to-br from-gray-100 via-gray-50 to-white rounded-2xl overflow-hidden mb-4 relative border border-gray-100 group-hover:border-gray-200 transition-all group-hover:shadow-xl">
+      <div className="absolute inset-0 bg-linear-to-br from-purple-500/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="w-full h-full flex items-center justify-center text-gray-300 group-hover:text-gray-400 transition-all group-hover:scale-110">
+        <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+        </svg>
+      </div>
     </div>
-    <div className="flex justify-between items-start">
+    <div className="flex justify-between items-start gap-4">
       <div>
-        <h3 className="text-2xl font-semibold tracking-tight mb-1">{title}</h3>
-        <p className="text-gray-500">{category}</p>
+        <h3 className="text-xl font-semibold tracking-tight mb-1 group-hover:text-gradient transition-all" style={{ fontFamily: 'Syne, sans-serif' }}>{title}</h3>
+        <p className="text-gray-500 text-sm flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-purple-500 transition-colors" />
+          {category}
+        </p>
       </div>
-      <div className="w-10 h-10 rounded-full border border-black/10 flex items-center justify-center opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+      <div className="w-10 h-10 shrink-0 rounded-full border-2 border-gray-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all group-hover:border-black group-hover:rotate-45">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+        </svg>
       </div>
     </div>
   </a>
-)
+);
 
 const ProofOfWork = () => {
   const xThreads = [
     { title: "The Growth Toolkit Your Product Needs", category: "X Thread", link: "https://x.com/i/status/1818700607751905765" },
     { title: "Solana ID and Identity Layers in Web3", category: "X Thread", link: "https://x.com/i/status/1831274889656914321" },
     { title: "Neon EVM (Solana Network Extension)", category: "X Thread", link: "https://x.com/i/status/1864736731301372224" },
-  ]
+  ];
 
   const articles = [
     { title: "How to Easily Distribute Tokens with Smithii's Airdrop Tool", category: "How-to Guide", link: "#" },
     { title: "I Can Prove I'm Real and Still Earn Rewards on Solana", category: "Project Breakdown", link: "#" },
-  ]
+  ];
 
   return (
-    <section id="work" className="py-24 px-6 max-w-7xl mx-auto">
-      <div className="flex justify-between items-end mb-16">
-        <div>
-          <p className="text-sm font-medium text-gray-500 tracking-wide uppercase mb-4">Proof of Work</p>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tighter">Selected Works</h2>
-        </div>
-      </div>
-
-      <div className="mb-20">
-        <h3 className="text-2xl font-semibold mb-8 text-gray-700">X / Twitter Threads</h3>
-        <div className="grid md:grid-cols-3 gap-x-8 gap-y-16">
-          {xThreads.map((project, i) => (
-            <ProjectCard key={i} {...project} />
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <h3 className="text-2xl font-semibold mb-8 text-gray-700">Medium / Long-Form Writing</h3>
-        <div className="grid md:grid-cols-2 gap-x-8 gap-y-16">
-          {articles.map((project, i) => (
-            <ProjectCard key={i} {...project} />
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-const About = () => {
-  return (
-    <section id="about" className="py-32 px-6 bg-white">
-      <div className="max-w-5xl mx-auto text-center">
-        <div className="relative inline-block">
-          <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-[1.1] text-black text-balance">
-            I'm a <span className="inline-block px-1 border-b-4 border-black mx-1">content writer</span> <br />
-            focused on <span className="inline-block px-1 border-b-4 border-black mx-1">clarity</span>, <br />
-            <span className="inline-block px-1 border-b-4 border-black mx-1">education</span>, and <span className="inline-block px-1 border-b-4 border-black mx-1">trust</span>.
+    <section id="work" className="py-32 px-6 relative">
+      <div className="absolute inset-0 bg-linear-to-b from-transparent via-purple-50/30 to-transparent" />
+      <div className="max-w-6xl mx-auto relative">
+        <div className="mb-16 text-center">
+          <p className="text-sm font-medium text-gradient tracking-wide uppercase mb-3">Proof of Work</p>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight" style={{ fontFamily: 'Syne, sans-serif' }}>
+            Selected <span className="text-gradient-animated">Works</span>
           </h2>
         </div>
 
-        <div className="mt-20 grid md:grid-cols-2 gap-12 text-left max-w-4xl mx-auto items-center">
-          <div className="border-2 border-black p-8">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 text-lg font-medium">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                design8sheva@gmail.com
-              </div>
-              <div className="flex items-center gap-3 text-lg font-medium">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                @_0drizzle
-              </div>
-            </div>
-          </div>
-          <div className="space-y-6">
-            <p className="text-lg text-gray-800 leading-relaxed">
-              I write about Web3 and decentralized finance, with the goal of making complex ideas easier to understand — especially for people encountering them for the first time.
-            </p>
-            <p className="text-lg text-gray-800 leading-relaxed">
-              My work spans educational X threads, project breakdowns, and long-form articles. I care deeply about structure, flow, and helping the reader walk away actually understanding something, not just feeling impressed.
-            </p>
+        <div className="mb-20">
+          <h3 className="text-lg font-semibold mb-8 text-gray-600 flex items-center gap-3">
+            <span className="w-8 h-px bg-gray-300" />
+            X / Twitter Threads
+          </h3>
+          <div className="grid md:grid-cols-3 gap-8">
+            {xThreads.map((project, i) => (
+              <ProjectCard key={i} {...project} index={i} />
+            ))}
           </div>
         </div>
 
-        <div className="mt-16 max-w-3xl mx-auto text-left">
-          <ul className="space-y-4 text-lg text-gray-700">
-            <li className="flex items-start gap-3">
-              <span className="text-2xl">→</span>
-              <span>I use AI and design tools like Figma and Canva to streamline my workflow, while keeping the writing thoughtful, human, and original.</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-2xl">→</span>
-              <span>I focus on education-first content that helps users understand products before they're asked to trust them.</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-2xl">→</span>
-              <span>I'm comfortable working independently or alongside product, marketing, and growth teams.</span>
-            </li>
-          </ul>
+        <div>
+          <h3 className="text-lg font-semibold mb-8 text-gray-600 flex items-center gap-3">
+            <span className="w-8 h-px bg-gray-300" />
+            Medium / Long-Form Writing
+          </h3>
+          <div className="grid md:grid-cols-2 gap-8">
+            {articles.map((project, i) => (
+              <ProjectCard key={i} {...project} index={i} />
+            ))}
+          </div>
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
+
+
+const StatCounter = ({ value, label, suffix = "" }: { value: string; label: string; suffix?: string }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
+      { threshold: 0.5 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className="text-center">
+      <div className={`text-4xl md:text-5xl font-bold transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ fontFamily: 'Syne, sans-serif' }}>
+        {value}{suffix}
+      </div>
+      <div className="text-gray-500 mt-2">{label}</div>
+    </div>
+  );
+};
+
+const About = () => {
+  return (
+    <section id="about" className="py-32 px-6 bg-white relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-linear-to-l from-purple-50/50 to-transparent" />
+      <div className="max-w-4xl mx-auto relative">
+        <div className="text-center mb-16">
+          <p className="text-sm font-medium text-gradient tracking-wide uppercase mb-3">About Me</p>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-black leading-tight" style={{ fontFamily: 'Syne, sans-serif' }}>
+            I'm a content writer focused on{" "}
+            <span className="text-gradient-animated">clarity</span>,{" "}
+            <span className="text-gradient-animated" style={{ animationDelay: '0.3s' }}>education</span>, and{" "}
+            <span className="text-gradient-animated" style={{ animationDelay: '0.6s' }}>trust</span>.
+          </h2>
+        </div>
+
+        <div className="space-y-6 text-lg text-gray-600 leading-relaxed mb-16 max-w-2xl mx-auto text-center">
+          <p>
+            I write about Web3 and decentralized finance, with the goal of making complex ideas easier to understand — especially for people encountering them for the first time.
+          </p>
+          <p>
+            My work spans educational X threads, project breakdowns, and long-form articles. I care deeply about structure, flow, and helping the reader walk away actually understanding something.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4 mb-16 p-8 bg-linear-to-br from-gray-50 to-white rounded-3xl border border-gray-100">
+          <div className="flex items-center gap-3 text-base group cursor-default">
+            <span className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 group-hover:scale-110 transition-transform">✦</span>
+            <span>AI-assisted workflow</span>
+          </div>
+          <div className="flex items-center gap-3 text-base group cursor-default">
+            <span className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">✦</span>
+            <span>Education-first content</span>
+          </div>
+          <div className="flex items-center gap-3 text-base group cursor-default">
+            <span className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform">✦</span>
+            <span>Team-friendly</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-4 gap-8 pt-8 border-t border-gray-100">
+          <StatCounter value="2025" label="Started" />
+          <StatCounter value="5" suffix="+" label="Clients" />
+          <StatCounter value="10" suffix="+" label="Bounties Won" />
+          <StatCounter value="20" suffix="+" label="Projects" />
+        </div>
+      </div>
+    </section>
+  );
+};
+
 
 const Services = () => {
   const services = [
     {
       title: "Educational X Threads",
       description: "Simplify Web3 and DeFi concepts into engaging, digestible threads that educate and build trust with your audience.",
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-      )
+      icon: "💬",
+      gradient: "from-purple-100 to-pink-100",
+      iconBg: "from-purple-500 to-pink-500",
     },
     {
       title: "Project Breakdowns",
       description: "Deep-dive analysis that explains your product's use case, value proposition, and technical details in clear language.",
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-      )
+      icon: "📊",
+      gradient: "from-blue-100 to-cyan-100",
+      iconBg: "from-blue-500 to-cyan-500",
     },
     {
-      title: "Long-Form Articles & Guides",
+      title: "Long-Form Articles",
       description: "Comprehensive content for readers who want to truly understand — from how-to guides to educational deep dives.",
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-      )
+      icon: "📚",
+      gradient: "from-amber-100 to-orange-100",
+      iconBg: "from-amber-500 to-orange-500",
     },
-  ]
+  ];
+
   return (
-    <section id="services" className="py-24 px-6 max-w-7xl mx-auto">
-      <div className="mb-16">
-        <p className="text-sm font-medium text-gray-500 tracking-wide uppercase mb-4">My Services</p>
-        <h2 className="text-4xl md:text-5xl font-bold tracking-tighter">What I Can Help With</h2>
-      </div>
-      <div className="grid md:grid-cols-3 gap-8">
-        {services.map((service, i) => (
-          <div key={i} className="p-8 border border-gray-100 bg-white rounded-2xl hover:shadow-xl hover:border-transparent transition-all duration-300 group">
-            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-6 text-black group-hover:bg-black group-hover:text-white transition-colors">
-              {service.icon}
+    <section id="services" className="py-32 px-6 relative overflow-hidden">
+      <div className="absolute inset-0 bg-linear-to-b from-white via-gray-50/50 to-white" />
+      
+      <div className="max-w-6xl mx-auto relative">
+        <div className="mb-16 text-center">
+          <p className="text-sm font-medium text-gradient tracking-wide uppercase mb-3">My Services</p>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight" style={{ fontFamily: 'Syne, sans-serif' }}>
+            What I Can <span className="text-gradient-animated">Help</span> With
+          </h2>
+        </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {services.map((service, i) => (
+            <div
+              key={i}
+              className={`group p-8 bg-linear-to-br ${service.gradient} rounded-3xl border border-white/50 hover:shadow-2xl transition-all hover:-translate-y-2 cursor-default relative overflow-hidden`}
+            >
+              <div className="absolute inset-0 bg-white/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative">
+                <div className={`w-14 h-14 rounded-2xl bg-linear-to-br ${service.iconBg} flex items-center justify-center mb-6 text-xl group-hover:scale-110 group-hover:rotate-6 transition-all shadow-lg text-white`}>
+                  {service.icon}
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-gray-900" style={{ fontFamily: 'Syne, sans-serif' }}>{service.title}</h3>
+                <p className="text-gray-600 leading-relaxed mb-6">{service.description}</p>
+                <a href="#contact" className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-black transition-colors group/link">
+                  Get in Touch
+                  <svg className="ml-2 w-4 h-4 transition-transform group-hover/link:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                  </svg>
+                </a>
+              </div>
             </div>
-            <h3 className="text-2xl font-semibold mb-4">{service.title}</h3>
-            <p className="text-gray-500 leading-relaxed mb-8">{service.description}</p>
-            <a href="#contact" className="inline-flex items-center text-sm font-bold uppercase tracking-wide group-hover:opacity-70">
-              Get in Touch <svg className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-            </a>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
 const Contact = () => {
+  const [copied, setCopied] = useState(false);
+  
+  const copyEmail = () => {
+    navigator.clipboard.writeText("design8sheva@gmail.com");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <section id="contact" className="py-24 px-6 bg-black text-white">
-      <div className="max-w-4xl mx-auto text-center space-y-8">
-        <h2 className="text-5xl md:text-7xl font-bold tracking-tighter">Let's Work Together</h2>
-        <p className="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto text-balance">
-          I'm always happy to discuss ideas, collaborations, or projects. Open to short-term projects, ongoing content, and collaborations.
+    <section id="contact" className="py-32 px-6 bg-linear-to-br from-purple-600 via-pink-500 to-orange-400 text-white relative overflow-hidden">
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:40px_40px]" />
+      <FloatingOrb className="w-96 h-96 bg-white -top-40 -left-40 opacity-10" delay={0} />
+      <FloatingOrb className="w-80 h-80 bg-white bottom-0 -right-40 opacity-10" delay={2} />
+      
+      <div className="max-w-3xl mx-auto text-center relative">
+        <p className="text-sm font-medium text-white/70 tracking-wide uppercase mb-3">Get in Touch</p>
+        <h2 className="text-5xl md:text-7xl font-bold tracking-tight mb-6" style={{ fontFamily: 'Syne, sans-serif' }}>
+          Let's Work<br />Together
+        </h2>
+        <p className="text-xl text-white/80 mb-10 text-balance">
+          I'm always happy to discuss ideas, collaborations, or projects.
         </p>
-        <div className="pt-8">
-          <a href="mailto:design8sheva@gmail.com" className="inline-block text-4xl md:text-6xl font-bold underline decoration-1 underline-offset-8 hover:text-gray-300 transition-colors">
-            design8sheva@gmail.com
+        <button
+          onClick={copyEmail}
+          className="group inline-flex items-center gap-3 text-2xl md:text-3xl font-bold bg-white/10 backdrop-blur-sm px-8 py-4 rounded-full hover:bg-white/20 transition-all hover:scale-105 active:scale-95"
+        >
+          design8sheva@gmail.com
+          <span className="text-base opacity-70 group-hover:opacity-100 transition-opacity">
+            {copied ? "✓ Copied!" : "📋"}
+          </span>
+        </button>
+        <div className="flex justify-center gap-4 mt-12">
+          <a
+            href="https://x.com/_0drizzle"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full hover:bg-white/20 transition-all hover:scale-105"
+          >
+            X / Twitter
+          </a>
+          <a
+            href="mailto:design8sheva@gmail.com"
+            className="px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full hover:bg-white/20 transition-all hover:scale-105"
+          >
+            Email
           </a>
         </div>
-        <div className="flex justify-center gap-8 pt-16">
-          <a href="https://x.com/_0drizzle" target="_blank" rel="noopener noreferrer" className="text-lg font-medium text-gray-400 hover:text-white transition-colors">X / Twitter</a>
-          <a href="mailto:design8sheva@gmail.com" className="text-lg font-medium text-gray-400 hover:text-white transition-colors">Email</a>
-        </div>
-        <div className="pt-24 text-sm text-gray-600">
-          &copy; {new Date().getFullYear()} drizzleshine. DMs open.
+        <div className="mt-20 text-sm text-white/50">
+          © {new Date().getFullYear()}{" "}
+          <span style={{ fontFamily: 'Syne, sans-serif' }}>Drizzle</span>
+          <span style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic' }}>shine</span>
+          . DMs open.
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
 function App() {
   return (
-    <div className="bg-white min-h-screen text-black font-sans selection:bg-black selection:text-white">
+    <div className="bg-white min-h-screen text-black font-sans selection:bg-purple-500 selection:text-white">
       <Navbar />
       <Hero />
       <ProofOfWork />
@@ -265,7 +437,7 @@ function App() {
       <Services />
       <Contact />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
