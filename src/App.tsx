@@ -3,6 +3,7 @@ import "./App.css";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,8 +17,8 @@ const Navbar = () => {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-white/80 backdrop-blur-md border-b border-black/5 py-4"
-          : "bg-transparent py-6"
+          ? "bg-white/80 backdrop-blur-md border-b border-black/5 py-2"
+          : "bg-transparent py-3"
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
@@ -38,14 +39,44 @@ const Navbar = () => {
             </a>
           ))}
         </div>
-        <button className="md:hidden">
+        <button 
+          className="md:hidden p-2"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
+            {menuOpen ? (
+              <>
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </>
+            ) : (
+              <>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </>
+            )}
           </svg>
         </button>
       </div>
+      
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="md:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-md border-b border-black/5 py-4 px-6">
+          <div className="flex flex-col gap-4">
+            {["Work", "About", "Services", "Contact"].map((item) => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className="text-lg font-medium py-2 hover:text-purple-600 transition-colors"
+                onClick={() => setMenuOpen(false)}
+              >
+                {item}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
@@ -79,7 +110,7 @@ const Hero = () => {
     <section
       ref={heroRef}
       id="hero"
-      className="min-h-screen flex items-center justify-center px-6 pt-20 relative overflow-hidden"
+      className="min-h-screen flex items-center justify-center px-6 relative overflow-hidden"
     >
       {/* Animated background orbs */}
       <FloatingOrb className="w-96 h-96 bg-purple-300 -top-20 -left-20" delay={0} />
@@ -96,7 +127,7 @@ const Hero = () => {
           <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
           <span className="text-gradient">Web3 & DeFi Content Writer</span>
         </p>
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.1] text-black animate-slide-up" style={{ fontFamily: 'Syne, sans-serif' }}>
+        <h1 className="text-[3.4rem] md:text-[4.3rem] lg:text-[5.5rem] font-bold tracking-tight leading-[1.1] text-black animate-slide-up" style={{ fontFamily: 'Syne, sans-serif' }}>
           I help Web3 and DeFi brands{" "}
           <br className="hidden md:block" />
           turn complex ideas into{" "}
@@ -125,7 +156,7 @@ const Hero = () => {
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 animate-bounce">
         <div className="w-6 h-10 border-2 border-black/20 rounded-full flex justify-center pt-2">
           <div className="w-1 h-2 bg-black/40 rounded-full animate-scroll-down" />
         </div>
@@ -153,9 +184,8 @@ const ProjectCard = ({
     className="group block animate-fade-in-up"
     style={{ animationDelay: `${index * 0.1}s` }}
   >
-    <div className="aspect-4/3 bg-linear-to-br from-gray-100 via-gray-50 to-white rounded-2xl overflow-hidden mb-4 relative border border-gray-100 group-hover:border-gray-200 transition-all group-hover:shadow-xl">
-      <div className="absolute inset-0 bg-linear-to-br from-purple-500/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-      <div className="w-full h-full flex items-center justify-center text-gray-300 group-hover:text-gray-400 transition-all group-hover:scale-110">
+    <div className="aspect-4/3 bg-gray-50 rounded-2xl overflow-hidden mb-4 relative">
+      <div className="w-full h-full flex items-center justify-center text-gray-300 group-hover:text-gray-400 transition-all group-hover:scale-105">
         <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
         </svg>
@@ -163,14 +193,11 @@ const ProjectCard = ({
     </div>
     <div className="flex justify-between items-start gap-4">
       <div>
-        <h3 className="text-xl font-semibold tracking-tight mb-1 group-hover:text-gradient transition-all" style={{ fontFamily: 'Syne, sans-serif' }}>{title}</h3>
-        <p className="text-gray-500 text-sm flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-purple-500 transition-colors" />
-          {category}
-        </p>
+        <h3 className="text-xl font-semibold tracking-tight mb-1 group-hover:text-purple-600 transition-colors" style={{ fontFamily: 'Syne, sans-serif' }}>{title}</h3>
+        <p className="text-gray-500 text-sm">{category}</p>
       </div>
-      <div className="w-10 h-10 shrink-0 rounded-full border-2 border-gray-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all group-hover:border-black group-hover:rotate-45">
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="w-8 h-8 shrink-0 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all">
+        <svg className="w-3 h-3 transition-transform group-hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
         </svg>
       </div>
@@ -277,22 +304,13 @@ const About = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mb-16 p-8 bg-linear-to-br from-gray-50 to-white rounded-3xl border border-gray-100">
-          <div className="flex items-center gap-3 text-base group cursor-default">
-            <span className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 group-hover:scale-110 transition-transform">✦</span>
-            <span>AI-assisted workflow</span>
-          </div>
-          <div className="flex items-center gap-3 text-base group cursor-default">
-            <span className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">✦</span>
-            <span>Education-first content</span>
-          </div>
-          <div className="flex items-center gap-3 text-base group cursor-default">
-            <span className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform">✦</span>
-            <span>Team-friendly</span>
-          </div>
+        <div className="flex flex-wrap justify-center gap-3 mb-16">
+          <span className="px-4 py-2 bg-gray-100 rounded-full text-sm font-medium">AI-assisted workflow</span>
+          <span className="px-4 py-2 bg-gray-100 rounded-full text-sm font-medium">Education-first content</span>
+          <span className="px-4 py-2 bg-gray-100 rounded-full text-sm font-medium">Team-friendly</span>
         </div>
 
-        <div className="grid grid-cols-4 gap-8 pt-8 border-t border-gray-100">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 pt-8 border-t border-gray-100">
           <StatCounter value="2025" label="Started" />
           <StatCounter value="5" suffix="+" label="Clients" />
           <StatCounter value="10" suffix="+" label="Bounties Won" />
