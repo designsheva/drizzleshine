@@ -101,8 +101,8 @@ const Hero = () => {
       <FloatingOrb className="w-80 h-80 bg-blue-300 top-1/3 -right-20" delay={2} />
       <FloatingOrb className="w-64 h-64 bg-amber-200 bottom-20 left-1/4" delay={4} />
 
-      {/* Grid pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)]" />
+      {/* Grid pattern - GPU accelerated to prevent scroll stutter */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)] will-change-transform transform-gpu" />
 
       <div
         className="max-w-6xl w-full mx-auto space-y-5 relative z-10"
@@ -383,7 +383,8 @@ const Services = () => {
 const Contact = () => {
   return (
     <section id="contact" className="py-16 md:py-32 px-4 md:px-6 bg-linear-to-br from-purple-600 via-pink-500 to-orange-400 text-white relative overflow-hidden">
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:40px_40px]" />
+      {/* Grid pattern - GPU accelerated to prevent scroll stutter */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:40px_40px] will-change-transform transform-gpu" />
       <FloatingOrb className="w-96 h-96 bg-white -top-40 -left-40 opacity-10" delay={0} />
       <FloatingOrb className="w-80 h-80 bg-white bottom-0 -right-40 opacity-10" delay={2} />
 
