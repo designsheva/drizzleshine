@@ -381,14 +381,6 @@ const Services = () => {
 };
 
 const Contact = () => {
-  const [copied, setCopied] = useState(false);
-
-  const copyEmail = () => {
-    navigator.clipboard.writeText("drizzleshine@gmail.com");
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   return (
     <section id="contact" className="py-16 md:py-32 px-4 md:px-6 bg-linear-to-br from-purple-600 via-pink-500 to-orange-400 text-white relative overflow-hidden">
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:40px_40px]" />
